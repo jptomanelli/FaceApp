@@ -4,21 +4,25 @@ const state = {
   }
 };
 
-function pointIsWithinShape([x, y], shp) {
+function pointIsWithinShape(p, shp) {
+  const x = p[0];
+  const y = p[1];
+
   let inside = false;
   for (let i = 0, j = shp.length - 1; i < shp.length; j = i++) {
-    const [xi, yi] = shp[i];
-    const [xj, yj] = shp[j];
+    const xi = shp[i][0];
+    const yi = shp[i][1];
+    const xj = shp[j][0];
+    const yj = shp[j][1];
 
     const intersect = ((yi > y) != (yj > y))
       && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-
-    if (intersect) {
-      inside = !inside;
-    }
+    if (intersect) inside = !inside;
   }
+
   return inside;
 }
+
 
 function imgDataToImg(imgData, height, width) {
   const img = new Image();

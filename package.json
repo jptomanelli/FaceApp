@@ -2,7 +2,7 @@
   "name": "FaceApp",
   "version": "1.0.0",
   "scripts": {
-    "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public/build/", 
+    "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public/build/",
     "build": "npm run wasm && rollup -c",
     "dev": "npm run wasm && rollup -c -w",
     "start": "npm run wasm && sirv public --single"
@@ -17,6 +17,7 @@
   "dependencies": {
     "@tensorflow-models/facemesh": "0.0.1",
     "@tensorflow/tfjs": "^1.7.3",
+    "@tensorflow/tfjs-backend-wasm": "^1.7.4",
     "sirv-cli": "^0.4.4"
   }
 }
