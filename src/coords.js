@@ -1,5 +1,5 @@
 
-class Coords {
+export class Coords {
 
   constructor(x = null, y = null) {
     this.x = x;
@@ -26,5 +26,3 @@ class Coords {
   }
 
 }
-
-export default Coords;

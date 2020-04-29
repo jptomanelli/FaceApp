@@ -1,104 +1,60 @@
-import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as facemesh from "@tensorflow-models/facemesh";
 import * as tf from "@tensorflow/tfjs";
-import Controls from './controls.js';
+import * as facemesh from "@tensorflow-models/facemesh";
+import { setWasmPath } from "@tensorflow/tfjs-backend-wasm";
+import { Controls } from './controls.js';
 import { drawImage, drawEmoji, drawFacePull } from './effects';
 
-/**
- * Main app loop
- */
-class App {
+const WASM_PATH = './build/tfjs-backend-wasm.wasm';
 
-  constructor() {
+async function main() {
+  const video = document.querySelector('#video');
+  const canvas = document.querySelector('#canvas');
 
-    //  Is TF completely loaded
-    this.loaded = false;
-    this.running = false;
+  const ctx = canvas.getContext('2d');
 
-    //  Element Reference
-    this.video = document.querySelector('#video');
-    this.canvas = document.querySelector('#canvas');
+  setWasmPath(WASM_PATH);
+  await tf.setBackend("wasm");
 
-    //  Mouse / touch event data
-    this.controls = new Controls({ parentElement: this.canvas });
-    this.controls.attachEvents();
+  //  mouse and touch controls
+  const controls = new Controls({ parentElement: canvas });
+  controls.attachEvents();
 
-    //  set video to visible and canvas hidden
-    this.toggleCanvas(false);
+  //  wait for camera approval
+  const webcam = await tf.data.webcam(video);
 
-    //  Canvas context
-    this.ctx = canvas.getContext('2d');
+  let height = video.videoHeight;
+  let width = video.videoWidth;
 
-    //  height and video of the camvas determined by the webcam
-    this.width;
-    this.height;
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.maxWidth = `${width}px`;
+  canvas.style.maxHeight = `${height}px`;
+  video.width = width;
+  video.height = height;
 
-    this.currentEffect;
-    this.effectState = {};
 
-    this._load().then(this.startLoop.bind(this));
-  }
+  const model = await facemesh.load();
 
-  async _load() {
-    this.webcam = await tf.data.webcam(this.video);
-    this._setheightAndWidth();
-    return Promise.all([mobilenet.load(), facemesh.load()]).then(([_, model]) => {
-      this.model = model;
-      this.loaded = true;
-    });
-  }
+  try {
+    while (true) {
+      
+      //  Get image from cam and send to model
+      const image = await webcam.capture();
+      const faces = await model.estimateFaces(image);
 
-  _setheightAndWidth() {
-    this.height = this.video.videoHeight;
-    this.width = this.video.videoWidth;
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-    this.video.width = this.width;
-    this.video.height = this.height;
-  }
+      //  Effects!
+      drawFacePull({ image, ctx, height, width, faces, controls });
 
-  toggleCanvas(show = true) {
-    if (show) {
-      this.canvas.style.display = '';
-      setTimeout(() => this.video.style.display = 'none', 100);
-    } else {
-      this.video.style.display = '';
-      setTimeout(() => this.canvas.style.display = 'none', 100);
+      //  Clean up after yourself
+      image.dispose();
+
+      await tf.nextFrame();
+    
     }
-  }
-
-  async startLoop() {
-
-    if (this.isRunning === true) {
-      return;
-    }
-
-    this.isRunning = true;
-    this.toggleCanvas();
-
-    try {
-
-      while (true) {
-
-        const { ctx, height, width, controls, effectState } = this;
-        const image = await this.webcam.capture();
-        let faces = [];
-        if (this.loaded) {
-          faces = await this.model.estimateFaces(image);
-        }
-        drawFacePull({ image, ctx, height, width, faces, controls, effectState });
-        image.dispose();
-        await tf.nextFrame();
-      }
-
-    } catch (err) {
-      console.error(err);
-      this.isRunning = false;
-
-    }
+  } catch (err) {
+    console.error(err);
   }
 
 }
 
-const app = new App();
-window.app = app;
+main();

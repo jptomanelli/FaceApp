@@ -4,20 +4,19 @@ const state = {
   }
 };
 
-function pointIsWithinShape(p, shp) {
-  // ray-casting algorithm
-  var x = p[0], y = p[1];
+function pointIsWithinShape([x, y], shp) {
+  let inside = false;
+  for (let i = 0, j = shp.length - 1; i < shp.length; j = i++) {
+    const [xi, yi] = shp[i];
+    const [xj, yj] = shp[j];
 
-  var inside = false;
-  for (var i = 0, j = shp.length - 1; i < shp.length; j = i++) {
-    var xi = shp[i][0], yi = shp[i][1];
-    var xj = shp[j][0], yj = shp[j][1];
-
-    var intersect = ((yi > y) != (yj > y))
+    const intersect = ((yi > y) != (yj > y))
       && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
-  }
 
+    if (intersect) {
+      inside = !inside;
+    }
+  }
   return inside;
 }
 

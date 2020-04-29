@@ -1,6 +1,6 @@
-import Coords from './coords';
+import { Coords } from './coords';
 
-class Controls {
+export class Controls {
 
   constructor(options = {}) {
     this.isPressedDown = false;
@@ -54,5 +54,3 @@ class Controls {
   }
 
 }
-
-export default Controls;

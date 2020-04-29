@@ -1,10 +1,11 @@
 {
-  "name": "Face",
+  "name": "FaceApp",
   "version": "1.0.0",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --single"
+    "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public/build/", 
+    "build": "npm run wasm && rollup -c",
+    "dev": "npm run wasm && rollup -c -w",
+    "start": "npm run wasm && sirv public --single"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
@@ -15,7 +16,6 @@
   },
   "dependencies": {
     "@tensorflow-models/facemesh": "0.0.1",
-    "@tensorflow-models/mobilenet": "^2.0.4",
     "@tensorflow/tfjs": "^1.7.3",
     "sirv-cli": "^0.4.4"
   }
