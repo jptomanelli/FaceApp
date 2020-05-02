@@ -5,10 +5,27 @@ import { Controls } from './controls.js';
 import { drawImage, drawEmoji, drawFacePull } from './effects';
 
 const WASM_PATH = './build/tfjs-backend-wasm.wasm';
+const EFFECTS = {
+  EMOJI: 'emoji', 
+  FACEPULL: 'facepull'
+};
 
 async function main() {
   const video = document.querySelector('#video');
   const canvas = document.querySelector('#canvas');
+  const effectButtons = document.querySelectorAll('[data-effect]');
+
+  let currentEffect = '';
+
+  [...effectButtons].forEach((btn, _, allBtns) => {
+    btn.addEventListener('click', e => {
+      if (btn.dataset.effect === currentEffect) {
+        currentEffect = '';
+      } else {
+        currentEffect = btn.dataset.effect;
+      }
+    });
+  })
 
   const ctx = canvas.getContext('2d');
 
@@ -27,8 +44,6 @@ async function main() {
 
   canvas.width = width;
   canvas.height = height;
-  canvas.style.maxWidth = `${width}px`;
-  canvas.style.maxHeight = `${height}px`;
   video.width = width;
   video.height = height;
 
@@ -42,8 +57,13 @@ async function main() {
       const image = await webcam.capture();
       const faces = await model.estimateFaces(image);
 
-      //  Effects!
-      drawFacePull({ image, ctx, height, width, faces, controls });
+      if (currentEffect === EFFECTS.EMOJI) {
+        drawEmoji({ image, ctx, height, width, faces });
+      } else if (currentEffect === EFFECTS.FACEPULL) {
+        drawFacePull({ image, ctx, height, width, faces, controls });
+      } else {
+        drawImage({ image, ctx, height, width });
+      }
 
       //  Clean up after yourself
       image.dispose();

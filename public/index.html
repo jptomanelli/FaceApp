@@ -5,13 +5,29 @@
 	<meta name='viewport' content='width=device-width,initial-scale=1'>
 	<title>Face</title>
 	<link rel='icon' type='image/png' href='/favicon.png'>
+	<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 	<link rel='stylesheet' href='/global.css'>
 	<script defer src='/build/bundle.js'></script>
 </head>
 <body>
-<div class="container">
-	<video id="video" autoplay playsinline muted></video>
-  <canvas id="canvas"></canvas>
-</div>
+	<nav class="flex items-center justify-between flex-wrap bg-blue-600 p-4">
+		<div class="flex items-center flex-shrink-0 text-white mr-6">
+			<span class="font-semibold text-xl tracking-tight">FaceApp</span>
+		</div>
+	</nav>
+	<div class="container max-w-screen-md mx-auto">
+		<video id="video" class="hidden" autoplay playsinline muted></video>
+		<canvas id="canvas" class="w-full"></canvas>
+		<div class="">
+			<button class="py-2 px-2 rounded-l" data-effect="emoji" >
+				<img class="mx-4 w-10" src="/image/emoji.svg" alt="Camera" />
+				<span>Emoji</span>
+			</button>
+			<button class="py-2 px-2 rounded-l" data-effect="facepull" >
+				<img class="mx-4 w-10" src="/image/face.svg" alt="Camera" />
+				<span>Face Pull</span>
+			</button>
+		</div>
+	</div>
 </body>
 </html>

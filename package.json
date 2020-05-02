@@ -2,10 +2,11 @@
   "name": "FaceApp",
   "version": "1.0.0",
   "scripts": {
+    "clean": "rm -rf public/build && mkdir public/build",
     "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public/build/",
-    "build": "npm run wasm && rollup -c",
-    "dev": "npm run wasm && rollup -c -w",
-    "start": "npm run wasm && sirv public --single"
+    "build": "npm run clean && npm run wasm && rollup -c",
+    "dev": "npm run clean && npm run wasm && rollup -c -w",
+    "start": "npm run clean && npm run wasm && sirv public --single"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
